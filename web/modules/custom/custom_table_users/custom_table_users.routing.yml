@@ -1,0 +1,8 @@
+custom_table_users.tableform:
+  path: '/table'
+  defaults:
+    _form: '\Drupal\custom_table_users\Form\TableForm'
+    _title: 'Table'
+  requirements:
+    _access: 'TRUE'
+

@@ -1,0 +1,5 @@
+name: Custom Table Users
+type: module
+description: 'Custom table to display all users and the ability to send them a message to email'
+package: Custom
+core_version_requirement: ^8 || ^9

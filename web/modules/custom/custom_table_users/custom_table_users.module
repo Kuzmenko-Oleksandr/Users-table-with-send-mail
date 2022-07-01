@@ -1,0 +1,73 @@
+<?php
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function custom_table_users_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.custom_table_users':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('How to send an email programmatically') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function custom_table_users_mail($key, &$message, $params) {
+
+  $options = [
+    'langcode' => $message['langcode'],
+  ];
+  if ($key == 'contact_message') {
+    $from = \Drupal::config('system.site')
+      ->get('mail');
+    $message['subject'] = t('E-mail sent from @site-name', [
+      '@site-name' => $from,
+    ], $options);
+
+    // Note that the message body is an array, not a string.
+    $account = \Drupal::currentUser();
+    $message['body'][] = t('@name sent you the following message:', [
+      '@name' => $account
+        ->getAccountName(),
+    ], $options);
+    $message['body'][] = Html::escape($params['message']);
+  }
+}
+
+///**
+// * Implements hook_entity_insert().
+// */
+//function custom_table_users_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+//
+//  if ($entity->getEntityTypeId() !== 'node' || ($entity->getEntityTypeId() === 'node' && $entity->bundle() !== 'page')) {
+//    return;
+//  }
+//
+//  $mailManager = \Drupal::service('plugin.manager.mail');
+//
+//  $module = 'custom_table_users_mail';
+//  $key = 'create_page';
+//  $to = \Drupal::currentUser()->getEmail();
+//  $params['message'] = $entity->get('body')->value;
+//  $params['node_title'] = $entity->label();
+//  $langcode = \Drupal::currentUser()->getPreferredLangcode();
+//  $send = true;
+//
+//  $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
+//  if ($result['result'] !== true) {
+//    \Drupal::messenger()->addMessage(t('There was a problem sending your message and it was not sent.'), 'error');
+//  }
+//  else {
+//    \Drupal::messenger()->addMessage(t('Your message has been sent.'));
+//  }
+//
+//}
